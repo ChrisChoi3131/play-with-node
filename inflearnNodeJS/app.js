@@ -25,3 +25,9 @@ app.post('/email_post',function(req,res){
 //    res.send("<h1>welcom " + req.body.email + "</h1>");
     res.render('email.ejs' , {"email" : req.body.email});
 });
+
+app.post("/ajax_send_email", function(req,res){
+    console.log(req.body.email);
+    var responseData = {"result" : "OK", "email" : req.body.email};
+    res.json(responseData);
+});
