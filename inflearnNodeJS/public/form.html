@@ -26,7 +26,11 @@
              xhr.send(data);
              xhr.addEventListener("load", function(){
                 var result = JSON.parse(xhr.responseText);
-                document.querySelector(".result").innerHTML = result.email;
+                if(result.result !== "ok"){
+                    document.querySelector(".result").innerHTML = "Your email addr is not found.";
+                }else{
+                    document.querySelector(".result").innerHTML = result.name;
+                }
              });
         }
     </script>

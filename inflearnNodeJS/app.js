@@ -2,12 +2,13 @@ var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var mysql = require("mysql");
+
 var connection = mysql.createConnection({
     host : "localhost",
-    port : 3300,
+    port : 3306,
     user : "root",
     password : 'dydfkr32',
-    database : "CYRDB"
+    database : "cyrdb"
 });
 connection.connect();
 
@@ -36,7 +37,17 @@ app.post('/email_post',function(req,res){
 });
 
 app.post("/ajax_send_email", function(req,res){
-    console.log(req.body.email);
-    var responseData = {"result" : "OK", "email" : req.body.email};
-    res.json(responseData);
+    var email = req.body.email;
+    var responseData = {};
+    var query = connection.query('select name from user where email ="' + email + '"',function(err,rows){
+        if(err) throw err;
+        if(rows[0]){
+            responseData.result = "ok";
+            responseData.name = rows[0].name;
+        }else {
+            responseData.result = "none";
+            responseData.name = "";
+        }
+        res.json(responseData);
+    });
 });
