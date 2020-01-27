@@ -15,6 +15,7 @@ var connection = mysql.createConnection({
 });
 connection.connect();
 router.get('/', function(req, res) {
+    console.log("get login page");
     var msg;
     var errMsg = req.flash('error');
     if (errMsg) msg = errMsg;
@@ -32,7 +33,7 @@ passport.deserializeUser(function(id,done){
 })
 
 passport.use(
-    'local-join',
+    'local-login',
     new LocalStrategy(
         {
             usernameField: 'id',
@@ -55,13 +56,22 @@ passport.use(
         }
     )
 );
+
 router.post(
     '/',
-    passport.authenticate('local-join', {
-        successRedirect: '/main',
-        failureRedirect: '/join',
-        failureFlash: true
-    })
+    function (req,res,next) {
+        passport.authenticate('local-login' , function(err, user, info){
+            if(err) res.status(500).json(err);
+            if(!user) {
+                return res.status(401).json(info.message);
+            };
+            req.logIn(user,function(err){
+                if(err){
+                    return next(err);
+                }
+            });
+        })
+    }
 );
 
 // router.post('/',function(req,res){
